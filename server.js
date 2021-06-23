@@ -76,5 +76,6 @@ app.get('/api/fileInfo', function(req, res) {
 
 });
 
-// uncomment later
-app.listen(3001);
+// uncomment for NW
+//app.listen(3000);
+app.listen(3001); // for UI dev, webpack proxies here
