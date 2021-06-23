@@ -10,11 +10,11 @@ Ffmpeg.setFfprobePath(ffprobePath);
 
 app.use(express.static('./nuxt/dist/'));
 
-app.get('/test/', function(req, res) {
+app.get('/api/', function(req, res) {
     res.send({test: true});
 });
 
-app.get('/codec/list', function(req, res) {
+app.get('/api/codec/list', function(req, res) {
     Ffmpeg.getAvailableCodecs(function(err, data) {
         res.send({
             error: err, 
@@ -23,7 +23,7 @@ app.get('/codec/list', function(req, res) {
     });    
 });
 
-app.get('/format/list', function(req, res) {
+app.get('/api/format/list', function(req, res) {
     Ffmpeg.getAvailableFormats(function(err, data) {
         res.send({
             error: err, 
@@ -32,7 +32,7 @@ app.get('/format/list', function(req, res) {
     });
 });
 
-app.get('/filters/list', function(req, res) {
+app.get('/api/filters/list', function(req, res) {
     Ffmpeg.getAvailableFilters(function(err, data) {
         res.send({
             error: err, 
@@ -41,7 +41,7 @@ app.get('/filters/list', function(req, res) {
     });
 });
 
-app.get('/encoders/list', function(req, res) {
+app.get('/api/encoders/list', function(req, res) {
     Ffmpeg.getAvailableEncoders(function(err, data) {
         res.send({
             error: err, 
@@ -50,7 +50,7 @@ app.get('/encoders/list', function(req, res) {
     });
 });
 
-app.get('/info', function(req, res) {
+app.get('/api/info', function(req, res) {
     const filePath = req.query.file;
     try {
         if (!fs.existsSync(filePath)) {
@@ -77,4 +77,4 @@ app.get('/info', function(req, res) {
 });
 
 // uncomment later
-app.listen(3000);
+app.listen(3001);
