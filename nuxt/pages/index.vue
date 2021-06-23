@@ -10,14 +10,15 @@
         <v-card-title class="headline">
           Converter
         </v-card-title>
+        <v-card-text>
+          <v-file-input prepend-icon="mdi-video" show-size truncate-length="55" accept="video/*" 
+            v-model="inputFile"
+            label="Video file input"></v-file-input>            
+        </v-card-text>
         <v-card-actions>
           <v-list-item class="grow">
           <v-row align="center" >
-<v-btn color="secondary" nuxt to="/convert-avi-mpeg">
-            Select source file
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn color="default" nuxt to="/convert-avi-mpeg">
+          <v-btn color="default" nuxt to="/convert-avi-mpeg" :disabled="inputFile === null">
             Input info
           </v-btn>
           <v-spacer></v-spacer>
@@ -25,7 +26,7 @@
             Output format
           </v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="success" nuxt to="/convert-avi-mpeg">
+          <v-btn color="success" nuxt to="/convert-avi-mpeg" :disabled="inputFile === null">
             Start
           </v-btn>
           </v-row>
@@ -47,6 +48,7 @@ export default {
   },
   data: function() {
     return {
+      inputFile: null, 
       error: ''
     }
   },
@@ -56,6 +58,18 @@ export default {
       console.log('nw.window', win);
     } else {
       this.error = 'NW object unavailable'
+    }
+  },
+  methods: {
+    onSelectFile(file) {
+      
+      var fileinput = document.querySelector('input[type=file]');
+      console.log(fileinput.value);
+    }
+  },
+  watch: {
+    inputFile: (val) => {
+      console.log(val)
     }
   }
 }
