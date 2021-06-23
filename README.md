@@ -10,7 +10,7 @@ Looking at https://brainhub.eu/library/electron-alternatives-javascript-framewor
     1.1 Проблема с отображением стандартной системной модалки выбора файла
     1.2 Проблема с запуском: после старта отображается белое окно
 
-2. [ ] NW.js
+2. [X] NW.js
     2.1 https://github.com/elegantweb/nwjs-vue ошибка npm install: `PostCSS plugin postcss-discard-comments requires PostCSS 8.`
     2.2 Nuxt + clean NW.js + https://github.com/zcbenz/nw-sample-apps + https://github.com/nwutils/nw-local-server-example/
     2.3 Проблема с остановкой локального сервера
@@ -39,3 +39,6 @@ $ npm run start
 # generate static project
 $ npm run generate
 ```
+
+## Video formats
+
