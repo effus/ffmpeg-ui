@@ -1,0 +1,36 @@
+{
+  "name": "ffmpeg-ui",
+  "version": "1.0.0",
+  "description": "Цель проекта: параметризирование известной утилиты ffmpeg с помощью создания desktop-приложения с использованием одного из известных Web-движков.",
+  "node-main": "server.js",
+  "main": "http://localhost:3000",
+  "node-remote": "http://localhost:3000",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nw": "^0.54.0"
+  },
+  "window": {
+    "position": "center",
+    "width": 700,
+    "min_width": 700,
+    "height": 800,
+    "min_height": 800,
+    "toolbar": true
+  },
+  "scripts": {
+    "start": "nw .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/effus/ffmpeg-ui.git"
+  },
+  "author": "effus",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/effus/ffmpeg-ui/issues"
+  },
+  "homepage": "https://github.com/effus/ffmpeg-ui#readme"
+}
