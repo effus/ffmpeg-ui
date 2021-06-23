@@ -1,6 +1,21 @@
-# neutralinojs-minimal
-The simplest template for a Neutralinojs app. It's possible to use your favorite frontend framework using the following steps.
+# FFMPEG UI
 
-- Create a new project using your favorite frontend framework. (Eg: `ng new --directory .`)
-- Make the frontend framework's build path and Neutralino config's `url`, `resourcesPath` the same.
-- Build with the correct base href.
+Цель проекта: параметризирование известной утилиты ffmpeg с помощью создания desktop-приложения с использованием одного из известных Web-движков.
+
+## Checked Frameworks
+
+Looking at https://brainhub.eu/library/electron-alternatives-javascript-frameworks-for-desktop-apps/
+
+1. [x] Electron
+    1.1 Проблема с отображением стандартной системной модалки выбора файла
+    1.2 Проблема с запуском: после старта отображается белое окно
+
+2. 
+
+Neutralino (???)
+
+## Setup
+
+```
+
+```
