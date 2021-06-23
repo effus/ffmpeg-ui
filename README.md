@@ -40,5 +40,15 @@ $ npm run start
 $ npm run generate
 ```
 
-## Video formats
+## FYI: best way to add FFmpeg to project
 
+1. `npm i fluent-ffmpeg` - gives all neccessary methods
+2. `npm i @ffmpeg-installer/ffmpeg` - add binary of ffmpeg to project
+3. `const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;` - get path of binary
+4. `Ffmpeg.setFfmpegPath(ffmpegPath);` - set binary path value for fluent-ffmpeg
+5. `npm i @ffprobe-installer/ffprobe` - add ffprobe binary to project
+
+## Useful tools
+
+1. All system codecs `Ffmpeg.getAvailableCodecs()`
+2. 

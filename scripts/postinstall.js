@@ -68,17 +68,12 @@ const removeBuild = function(dest) {
 console.log('=== Start postinstall ===');
 
 (async () => {
-    await removeBuild('./ffmpeg/build/');
-    await downloadFFmpeg("https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z", "./ffmpeg/ffmpeg.7z");
-    console.log('FFmpeg pack downloaded')
-    await extract('./ffmpeg/ffmpeg.7z', './ffmpeg/');
-    console.log('FFmpeg extracted');
-    await renameUnPackedDir('./ffmpeg/');
-    fs.unlinkSync('./ffmpeg/ffmpeg.7z');
-
+    //await removeBuild('./ffmpeg/build/');
+    //await downloadFFmpeg("https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z", "./ffmpeg/ffmpeg.7z");
+    //console.log('FFmpeg pack downloaded')
+    //await extract('./ffmpeg/ffmpeg.7z', './ffmpeg/');
+    //console.log('FFmpeg extracted');
+    //await renameUnPackedDir('./ffmpeg/');
+    //fs.unlinkSync('./ffmpeg/ffmpeg.7z');
+    console.log('=== Postinstall complete ===');
 })();
-
-
-    //extract('./ffmpeg/ffmpeg.7z', './ffmpeg/').then(() => {
-    //    console.log('FFmpeg extracted')
-    //}).catch(console.error)
