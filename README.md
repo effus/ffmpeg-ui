@@ -48,7 +48,7 @@ $ npm run generate
 4. `Ffmpeg.setFfmpegPath(ffmpegPath);` - set binary path value for fluent-ffmpeg
 5. `npm i @ffprobe-installer/ffprobe` - add ffprobe binary to project
 
-## Useful tools
+## API
 
-1. All system codecs `Ffmpeg.getAvailableCodecs()`
-2. 
+1. All system codecs: `http://localhost:3000/api/codec/list`
+2. File info: `http://localhost:3000/api/fileInfo?file=...`

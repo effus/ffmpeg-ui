@@ -1,0 +1,10 @@
+[
+    {
+        "preset": "DIVx",
+        "file": "divx.js"
+    },
+    {
+        "preset": "Flash Video",
+        "file": "flv.js"
+    }
+]

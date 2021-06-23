@@ -50,7 +50,7 @@ app.get('/api/encoders/list', function(req, res) {
     });
 });
 
-app.get('/api/info', function(req, res) {
+app.get('/api/fileInfo', function(req, res) {
     const filePath = req.query.file;
     try {
         if (!fs.existsSync(filePath)) {
