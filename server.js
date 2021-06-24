@@ -8,8 +8,6 @@ const ffprobePath = require('@ffprobe-installer/ffprobe').path;
 Ffmpeg.setFfmpegPath(ffmpegPath);
 Ffmpeg.setFfprobePath(ffprobePath);
 
-app.use(express.static('./nuxt/dist/'));
-
 app.get('/api/', function(req, res) {
     res.send({test: true});
 });
@@ -76,6 +74,7 @@ app.get('/api/fileInfo', function(req, res) {
 
 });
 
-// uncomment for NW
-//app.listen(3000);
+app.use(express.static('./nuxt/dist/'));
+
+//app.listen(3000); // for NW
 app.listen(3001); // for UI dev, webpack proxies here

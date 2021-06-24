@@ -7,10 +7,10 @@ exports.load = function(ffmpeg) {
     .flvmeta()
     .size('320x?')
     .videoBitrate('512k')
-    .videoCodec('libx264')
+    //.videoCodec('libx264')
+    .videoCodec('flv')
     .fps(24)
     .audioBitrate('96k')
     .audioCodec('aac')
-    .audioFrequency(22050)
     .audioChannels(2);
 };

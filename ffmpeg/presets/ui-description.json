@@ -1,10 +1,54 @@
 [
     {
+        "preset": "Custom preset",
+        "file": "custom",
+        "videoCodec": null,
+        "audioCodec": null,
+        "fileFormat": null,
+        "audioChannels": null,
+        "audioBitrate": null,
+        "fps": null,
+        "size": null,
+        "aspectRatio": null,
+        "videoBitrate": null
+    },
+    {
         "preset": "DIVx",
-        "file": "divx.js"
+        "file": "divx.js",
+        "videoCodec": "mpeg4",
+        "audioCodec": "libmp3lame",
+        "fileFormat": "avi",
+        "audioChannels": 2,
+        "audioBitrate": "128k",
+        "fps": null,
+        "size": "720x?",
+        "aspectRatio": null,
+        "videoBitrate": "1024k"
     },
     {
         "preset": "Flash Video",
-        "file": "flv.js"
+        "file": "flv.js",
+        "videoCodec": "flv",
+        "audioCodec": "aac",
+        "fileFormat": "flv",
+        "audioChannels": 2,
+        "audioBitrate": "96k",
+        "fps": 24,
+        "size": "320x?",
+        "aspectRatio": null,
+        "videoBitrate": "512k"
+    },
+    {
+        "preset": "Youtube Full-HD",
+        "file": "youtube-full-hd.js",
+        "videoCodec": "h264",
+        "audioCodec": "aac",
+        "fileFormat": "mp4",
+        "audioChannels": 2,
+        "audioBitrate": "128k",
+        "fps": 30,
+        "size": "1080x?",
+        "aspectRatio": "16:9",
+        "videoBitrate": "1024k"
     }
 ]

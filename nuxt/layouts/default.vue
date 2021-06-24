@@ -60,7 +60,12 @@
       :absolute="!fixed"
       app
     >
-      <span>&copy; {{ new Date().getFullYear() }}</span>
+      <v-container>
+      <v-row justify="space-between">
+        <span>&copy; {{ new Date().getFullYear() }}</span>
+        <a href="https://github.com/effus/ffmpeg-ui" target="_blank">Github</a>
+      </v-row>
+      </v-container>
     </v-footer>
   </v-app>
 </template>

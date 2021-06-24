@@ -19,15 +19,15 @@
           <v-list-item class="grow">
           <v-row align="center" >
           <v-btn color="default" nuxt :disabled="inputFile === null" @click="showFileInfo">
-            Input info
+            Input video info
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn color="default" nuxt @click="showOutputSetup">
-            Output format
+            Output config
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn color="success" nuxt to="/convert-avi-mpeg" :disabled="inputFile === null || outputSetup.isVisible === false">
-            Start
+            Convert
           </v-btn>
           </v-row>
           </v-list-item>
@@ -38,7 +38,7 @@
 
       <v-card class="mt-3" v-if="inputFileInfo.isVisible">
         <v-card-title class="headline">
-          Input file info
+          Input video info
         </v-card-title>
         <v-card-text>
           <v-simple-table dense>
@@ -75,57 +75,67 @@
 
       <v-card class="mt-3" v-if="outputSetup.isVisible">
         <v-card-title class="headline">
-          Setup output format
+          Output config
         </v-card-title>
         <v-card-text>
         
             <v-select
-              v-model="outputSetup.selectedFormat"
-              :items="outputSetup.presets"
+              v-model="outputSetup.selected.preset"
+              :items="outputSetup.lists.presets"
               item-text="preset"
               item-value="file"
               label="Available presets"
               required
+              @change="changePreset"
             ></v-select>
 
-            <v-simple-table dense>
-              <template v-slot:default>
-                <tbody>
+            <table class="w-100">
+              <tbody>
                   <tr>
-                    <td>
-                      <v-select :items="['512k', '1024k']" label="Video Bitrate"></v-select>
+                    <td width="33%">
+                      <v-autocomplete item-text="name" item-value="tag" @change="changeOption" label="Video Codec" 
+                      :items="outputSetup.lists.videoCodecs" v-model="outputSetup.selected.videoCodec"></v-autocomplete>
+                    </td>
+                    <td  width="33%">
+                      <v-select :items="['Leave origin', '128k', '512k', '1024k']" label="Video Bitrate" 
+                        v-model="outputSetup.selected.videoBitrate" @click="changeOption"></v-select>
                     </td>
                     <td>
-                      <v-select :items="outputSetup.videoCodecs" label="Codec"></v-select>
+                      <v-select :items="['Leave origin', '16:10', '16:9', '5:4', '4:3', '3:2']" label="Aspect ratio" 
+                        v-model="outputSetup.selected.aspectRatio" @click="changeOption"></v-select>
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      <v-select :items="['16:10', '16:9', '5:4', '4:3', '3:2']" label="Aspect ratio"></v-select>
+                      <v-select :items="['Leave origin', 24, 30, 60]" label="FPS" 
+                        v-model="outputSetup.selected.fps" @click="changeOption"></v-select>
                     </td>
                     <td>
-                      <v-select :items="['24', '30', '60']" label="FPS" ></v-select>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <v-select :items="['32k', '64k', '96k', '128k', '192k', '256k']" label="Audio bitrate"></v-select>
+                      <v-select :items="['Leave origin', '320x?', '640x?', '720x?', '768x?', '1080x?', '1280x?', '1440x?', '1920x?', '3840x?']" 
+                        label="Size" v-model="outputSetup.selected.size" @click="changeOption"></v-select>
                     </td>
                     <td>
-                      <v-select :items="outputSetup.audioCodecs" label="Audio codec"></v-select>
+                      <v-autocomplete :items="outputSetup.lists.fileFormats" label="Output file format" item-text="name" item-value="tag"
+                        v-model="outputSetup.selected.fileFormat" @click="changeOption"></v-autocomplete>
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      <v-select :items="['1', '2', '6']" label="Audio channels"></v-select>
+                      <v-autocomplete item-text="name" item-value="tag" :items="outputSetup.lists.audioCodecs" label="Audio codec" 
+                        v-model="outputSetup.selected.audioCodec" @click="changeOption"></v-autocomplete>
                     </td>
                     <td>
-                      <v-select :items="outputSetup.fileFormats" label="Output file format"></v-select>
+                      <v-select :items="['Leave origin', '32k', '64k', '96k', '128k', '192k', '256k']" label="Audio bitrate" 
+                        v-model="outputSetup.selected.audioBitrate" @click="changeOption"></v-select>
+                    </td>
+                    <td>
+                      <v-select :items="['Leave origin', 1, 2, 6]" label="Audio channels" 
+                        v-model="outputSetup.selected.audioChannels" @click="changeOption"></v-select>
                     </td>
                   </tr>
                 </tbody>
-              </template>
-            </v-simple-table>        
+            </table>
+
         </v-card-text>
       </v-card>
     </v-col>
@@ -153,11 +163,24 @@ export default {
       },
       outputSetup: {
         isVisible: false,
-        presets: presets,
-        videoCodecs: [],
-        audioCodecs: [],
-        fileFormats: [],
-        selectedFormat: null
+        lists: {
+          presets: presets,
+          videoCodecs: [],
+          audioCodecs: [],
+          fileFormats: [],
+        },
+        selected: {
+          preset: null,
+          videoCodec: null,
+          audioCodec: null,
+          fileFormat: null,
+          audioChannels: null,
+          audioBitrate: null,
+          fps: null,
+          aspectRatio: null,
+          videoBitrate: null,
+          size: null
+        },
       },
       error: ''
     }
@@ -170,6 +193,35 @@ export default {
       this.error = 'NW object unavailable'
       this.isNwAvailable = false;
     }
+    axios.get('/api/codec/list').then((response) => {
+      const codecs = [];
+      for (let i in response.data.codecs) {
+        codecs.push({
+          type: response.data.codecs[i].type,
+          tag: i,
+          name: response.data.codecs[i].description
+        });
+      }
+      this.outputSetup.lists.videoCodecs = codecs.filter(item => item.type === 'video').map(item => {
+        return {name: item.name + ' / tag:' + item.tag, tag: item.tag};
+      });
+      this.outputSetup.lists.audioCodecs = codecs.filter(item => item.type === 'audio').map(item => {
+        return {name: item.name + ' / tag:' + item.tag, tag: item.tag};
+      });
+    });
+    axios.get('/api/format/list').then((response) => {
+      const formats = [];
+      for (let i in response.data.formats) {
+        formats.push({
+          tag: i,
+          name: response.data.formats[i].description
+        });
+      }
+      this.outputSetup.lists.fileFormats = formats.map(item => {
+        return {name: item.name + ' / tag:' + item.tag, tag: item.tag};
+      });
+
+    });
   },
   methods: {
     showFileInfo() {
@@ -189,6 +241,23 @@ export default {
     showOutputSetup() {
       this.inputFileInfo.isVisible = false;
       this.outputSetup.isVisible = true;
+    },
+    changePreset(presetFile) {
+      const preset = presets.filter(item => item.file === presetFile)[0];
+      this.outputSetup.selected.aspectRatio = preset.aspectRatio;
+      this.outputSetup.selected.audioBitrate = preset.audioBitrate;
+      this.outputSetup.selected.audioChannels = preset.audioChannels;
+      const audioCodec = this.outputSetup.lists.audioCodecs.filter(item => item.tag === preset.audioCodec);
+      this.outputSetup.selected.audioCodec = audioCodec.length > 0 ? audioCodec[0] : null;
+      this.outputSetup.selected.fileFormat = preset.fileFormat;
+      this.outputSetup.selected.fps = preset.fps;
+      this.outputSetup.selected.size = preset.size;
+      this.outputSetup.selected.videoBitrate = preset.videoBitrate;
+      const videoCodec = this.outputSetup.lists.videoCodecs.filter(item => item.tag === preset.videoCodec);
+      this.outputSetup.selected.videoCodec = videoCodec.length > 0 ? videoCodec[0] : null;
+    },
+    changeOption() {
+      this.outputSetup.selected.preset = 'custom';
     }
   },
   watch: {
