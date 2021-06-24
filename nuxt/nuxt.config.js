@@ -72,9 +72,15 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    extend(config, { isClient }) {
+      config.node = {
+        fs: 'empty'
+      }
+    }
   },
 
   proxy: {
     '/api': 'http://localhost:3001/',
+    '/socket.io/': 'http://localhost:3001/',
   }
 }

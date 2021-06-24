@@ -70,11 +70,27 @@ app.get('/api/fileInfo', function(req, res) {
             error: e.message
         });
     }
-    
-
 });
+
+
 
 app.use(express.static('./nuxt/dist/'));
 
-//app.listen(3000); // for NW
-app.listen(3001); // for UI dev, webpack proxies here
+//const bindPort = 3000; // for NW
+const bindPort = 3001; // for UI dev, webpack proxies here
+
+//app.listen(bindPort); 
+const httpServer = require("http").createServer(app);
+const io = require("socket.io")(httpServer, {});
+
+io.on("connection", socket => { 
+    console.log('socket.io', 'new connection');
+    socket.on("converter-start", (clientData, callback) => {
+        console.log('socket.io', 'converter-start', clientData, callback);
+        callback({isStarted: true});
+      });
+    socket.on("disconnect", (reason) => {
+        console.log('socket.io', 'disconnect reason: ', reason);
+    });
+ });
+httpServer.listen(bindPort);

@@ -26,8 +26,8 @@
             Output config
           </v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="success" nuxt to="/convert-avi-mpeg" :disabled="inputFile === null || outputSetup.isVisible === false">
-            Convert
+          <v-btn color="success" nuxt @click="startConverter" :disabled="inputFile === null || outputSetup.isVisible === false || this.socket.connected === false">
+            Start converter
           </v-btn>
           </v-row>
           </v-list-item>
@@ -147,6 +147,7 @@ import Logo from '~/components/Logo.vue'
 import VuetifyLogo from '~/components/VuetifyLogo.vue'
 import axios from 'axios';
 import presets from '../../ffmpeg/presets/ui-description.json';
+import { io } from "socket.io-client";
 
 export default {
   components: {
@@ -157,6 +158,7 @@ export default {
     return {
       isNwAvailable: true,
       inputFile: null, 
+      socket: null,
       inputFileInfo: {
         isVisible: false,
         data: null
@@ -220,8 +222,20 @@ export default {
       this.outputSetup.lists.fileFormats = formats.map(item => {
         return {name: item.name + ' / tag:' + item.tag, tag: item.tag};
       });
-
     });
+
+    this.socket = io();
+    this.socket.on("disconnect", () => {
+      console.log('Socket disconncted');
+    });
+    this.socket.on("disconnect", () => {
+      console.log('Socket disconncted');
+    });
+    this.socket.on("connect_error", () => {
+      this.error = 'Socket connection error';
+    });
+    this.socket.on("convert-details", this.receiveConvertDetails);
+    this.socket.connect();
   },
   methods: {
     showFileInfo() {
@@ -258,6 +272,24 @@ export default {
     },
     changeOption() {
       this.outputSetup.selected.preset = 'custom';
+    },
+    startConverter() {
+      let filePath = this.inputFile.path;
+      if (!filePath) {
+        filePath = 'ffmpeg/DemoSampleVideo.mp4';
+      }
+      let payload = {
+        target: filePath,
+        config: this.outputSetup.selected
+      };
+      payload.config.videoCodec = payload.config.videoCodec.tag;
+      payload.config.audioCodec = payload.config.audioCodec.tag;
+      this.socket.emit('converter-start', payload, (resp) => {
+        console.log('socket response', resp);
+      });
+    },
+    receiveConvertDetails() {
+      console.log('convert details', data);
     }
   },
   watch: {
