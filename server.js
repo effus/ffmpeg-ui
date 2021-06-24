@@ -2,9 +2,11 @@
 const express = require('express');
 const app = express();
 const fs = require('fs');
+const path = require('path')
 const Ffmpeg = require('fluent-ffmpeg');
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffprobePath = require('@ffprobe-installer/ffprobe').path;
+const date = require('date-and-time');
 Ffmpeg.setFfmpegPath(ffmpegPath);
 Ffmpeg.setFfprobePath(ffprobePath);
 
@@ -76,21 +78,88 @@ app.get('/api/fileInfo', function(req, res) {
 
 app.use(express.static('./nuxt/dist/'));
 
-//const bindPort = 3000; // for NW
-const bindPort = 3001; // for UI dev, webpack proxies here
-
-//app.listen(bindPort); 
 const httpServer = require("http").createServer(app);
 const io = require("socket.io")(httpServer, {});
 
 io.on("connection", socket => { 
     console.log('socket.io', 'new connection');
     socket.on("converter-start", (clientData, callback) => {
-        console.log('socket.io', 'converter-start', clientData, callback);
-        callback({isStarted: true});
+        try {
+            console.log('socket.io', 'converter-start', clientData, callback);
+            let converter = Ffmpeg(clientData.target)
+                .on('progress', function(progress) {
+                    socket.emit('convert-details', { isFinished: false, progress });
+                    console.log('Processing: ' + progress.percent + '% done');
+                })
+                .on('error', function(err) {
+                    socket.emit('convert-details', { isFinished: true, error: err.message });
+                    console.log('An error occurred: ' + err.message);
+                })
+                .on('end', function() {
+                    socket.emit('convert-details', { isFinished: true });
+                    console.log('Processing finished !');
+                    delete converter;
+                });
+            if (!clientData.config.videoCodec) {
+                throw Error('No video codec specified');
+            }
+            converter.videoCodec(clientData.config.videoCodec.tag);
+            if (!clientData.config.audioCodec) {
+                throw Error('No audio codec specified');
+            }
+            converter.audioCodec(clientData.config.audioCodec.tag);
+            if (clientData.config.size) {
+                converter.size(clientData.config.size);
+            }
+            if (clientData.config.fileFormat) {
+                converter.format(clientData.config.fileFormat);
+            }
+            if (clientData.config.audioBitrate) {
+                converter.audioBitrate(clientData.config.audioBitrate);
+            }
+            if (clientData.config.audioChannels) {
+                converter.audioChannels(clientData.config.audioChannels);
+            }
+            if (clientData.config.videoBitrate) {
+                converter.videoBitrate(clientData.config.videoBitrate);
+            }
+            if (clientData.config.fps) {
+                converter.fps(clientData.config.fps);
+            }
+            if (clientData.config.aspectRatio) {
+                converter.aspect(clientData.config.aspectRatio);
+            }
+            if (clientData.config.fileFormat === 'flv') {
+                converter.flvmeta();
+            }
+            let outputFilePath = clientData.pattern;
+            if (!fs.existsSync(clientData.target)) {
+                throw new Error('target file not found');
+            }
+            const originPath = path.dirname(path.resolve(clientData.target));
+            const originName = path.basename(clientData.target, path.extname(clientData.target)) //notes
+            outputFilePath = outputFilePath
+                .replace(/\[originFileDir\]/g, originPath)
+                .replace(/\[originFileName\]/g, originName)
+                .replace(/\[datetime\]/g, date.format(new Date(), 'YYYY-MM-DD_HHmmss'))
+                .replace(/\[format\]/g, clientData.config.fileFormat);
+            if (!outputFilePath) {
+                throw new Error('Incorrect output path');
+            }
+            converter.output(outputFilePath);
+            converter.run();
+            callback({isStarted: true, error: null});
+        } catch (e) {
+            callback({isStarted: false, error: e.message});
+        }
+        
       });
     socket.on("disconnect", (reason) => {
         console.log('socket.io', 'disconnect reason: ', reason);
     });
  });
+
+const bindPort = 3000; // for NW
+//const bindPort = 3001; // for UI dev, webpack proxies here
+
 httpServer.listen(bindPort);
