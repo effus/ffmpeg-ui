@@ -87,13 +87,22 @@ io.on("connection", socket => {
         try {
             console.log('socket.io', 'converter-start', clientData, callback);
             let converter = Ffmpeg(clientData.target)
+                .on('start', function(commandLine) {
+                    socket.emit('convert-details', { isFinished: false, progress: {percent: 0}, command: commandLine });
+                    console.log('Processing: started with command:', commandLine);
+                })
                 .on('progress', function(progress) {
                     socket.emit('convert-details', { isFinished: false, progress });
                     console.log('Processing: ' + progress.percent + '% done');
                 })
-                .on('error', function(err) {
-                    socket.emit('convert-details', { isFinished: true, error: err.message });
-                    console.log('An error occurred: ' + err.message);
+                .on('error', function(err, stdout, stderr) {
+                    socket.emit('convert-details', { 
+                        isFinished: true, 
+                        error: err.message,
+                        stdout: stdout,
+                        stderr: stderr
+                    });
+                    console.log('An error occurred: ' + err.message, stdout, stderr);
                 })
                 .on('end', function() {
                     socket.emit('convert-details', { isFinished: true });
@@ -103,30 +112,30 @@ io.on("connection", socket => {
             if (!clientData.config.videoCodec) {
                 throw Error('No video codec specified');
             }
-            converter.videoCodec(clientData.config.videoCodec.tag);
+            converter.videoCodec(clientData.config.videoCodec);
             if (!clientData.config.audioCodec) {
                 throw Error('No audio codec specified');
             }
-            converter.audioCodec(clientData.config.audioCodec.tag);
-            if (clientData.config.size) {
+            converter.audioCodec(clientData.config.audioCodec);
+            if (clientData.config.size && clientData.config.size !== 'Leave origin') {
                 converter.size(clientData.config.size);
             }
-            if (clientData.config.fileFormat) {
+            if (clientData.config.fileFormat && clientData.config.size !== 'Leave origin') {
                 converter.format(clientData.config.fileFormat);
             }
-            if (clientData.config.audioBitrate) {
+            if (clientData.config.audioBitrate && clientData.config.size !== 'Leave origin') {
                 converter.audioBitrate(clientData.config.audioBitrate);
             }
-            if (clientData.config.audioChannels) {
+            if (clientData.config.audioChannels && clientData.config.size !== 'Leave origin') {
                 converter.audioChannels(clientData.config.audioChannels);
             }
-            if (clientData.config.videoBitrate) {
+            if (clientData.config.videoBitrate && clientData.config.size !== 'Leave origin') {
                 converter.videoBitrate(clientData.config.videoBitrate);
             }
-            if (clientData.config.fps) {
+            if (clientData.config.fps && clientData.config.size !== 'Leave origin') {
                 converter.fps(clientData.config.fps);
             }
-            if (clientData.config.aspectRatio) {
+            if (clientData.config.aspectRatio && clientData.config.size !== 'Leave origin') {
                 converter.aspect(clientData.config.aspectRatio);
             }
             if (clientData.config.fileFormat === 'flv') {

@@ -18,7 +18,8 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.7",
-    "nw": "^0.54.0"
+    "nw": "^0.54.0",
+    "nw-builder": "^3.5.7"
   },
   "window": {
     "position": "center",
@@ -31,6 +32,7 @@
   "scripts": {
     "preinstall": "node ./scripts/preinstall.js",
     "start": "nw .",
+    "build": "./node_modules/nw-builder/bin/nwbuild -p win64 .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "node ./scripts/postinstall.js",
     "dev": "node ./node_modules/nodemon/bin/nodemon.js server.js"

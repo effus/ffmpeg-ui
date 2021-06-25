@@ -26,11 +26,11 @@
             Input video info
           </v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="default" nuxt @click="showOutputSetup" :disabled="this.converting.isVisible">
+          <v-btn color="default" nuxt @click="showOutputSetup">
             Output config
           </v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="success" nuxt @click="startConverter" :disabled="canStart">
+          <v-btn color="success" nuxt @click="startConverter" :disabled="startDisabled">
             Start converter
           </v-btn>
           </v-row>
@@ -168,6 +168,10 @@
           <v-alert type="error" class="mt-3" v-if="converting.error">{{ converting.error }}</v-alert>
           <v-spacer></v-spacer>
           <v-alert type="success"  class="mt-3" v-if="converting.isFinished"> Converting complete </v-alert>
+          <v-spacer></v-spacer>
+          <v-container style="overflow-y: auto;">
+            <pre>{{ converting.command }}</pre>
+          </v-container>
         </v-card-text>
       </v-card>
     </v-col>
@@ -221,7 +225,8 @@ export default {
         isVisible: false,
         progress: null,
         isFinished: false,
-        error: null
+        error: null,
+        command: ''
       },
       error: '',
       
@@ -234,14 +239,15 @@ export default {
     } else {
       this.error = 'NW object unavailable, sample video file "DemoSampleVideo.mp4" will be used'
       this.isNwAvailable = false;
+      this.inputFile = new File([], 'DemoSampleVideo.mp4');
     }
-    axios.get('/api/codec/list').then((response) => {
+    axios.get('/api/encoders/list').then((response) => {
       const codecs = [];
-      for (let i in response.data.codecs) {
+      for (let i in response.data.encoders) {
         codecs.push({
-          type: response.data.codecs[i].type,
+          type: response.data.encoders[i].type,
           tag: i,
-          name: response.data.codecs[i].description
+          name: response.data.encoders[i].description
         });
       }
       this.outputSetup.lists.videoCodecs = codecs.filter(item => item.type === 'video').map(item => {
@@ -301,14 +307,14 @@ export default {
       this.outputSetup.selected.aspectRatio = preset.aspectRatio;
       this.outputSetup.selected.audioBitrate = preset.audioBitrate;
       this.outputSetup.selected.audioChannels = preset.audioChannels;
-      const audioCodec = this.outputSetup.lists.audioCodecs.filter(item => item.tag === preset.audioCodec);
-      this.outputSetup.selected.audioCodec = audioCodec.length > 0 ? audioCodec[0] : null;
+      //const audioCodec = this.outputSetup.lists.audioCodecs.filter(item => item.tag === preset.audioCodec);
+      this.outputSetup.selected.audioCodec = preset.audioCodec; // audioCodec.length > 0 ? audioCodec[0].tag : null;
       this.outputSetup.selected.fileFormat = preset.fileFormat;
       this.outputSetup.selected.fps = preset.fps;
       this.outputSetup.selected.size = preset.size;
       this.outputSetup.selected.videoBitrate = preset.videoBitrate;
-      const videoCodec = this.outputSetup.lists.videoCodecs.filter(item => item.tag === preset.videoCodec);
-      this.outputSetup.selected.videoCodec = videoCodec.length > 0 ? videoCodec[0] : null;
+      //const videoCodec = this.outputSetup.lists.videoCodecs.filter(item => item.tag === preset.videoCodec);
+      this.outputSetup.selected.videoCodec = preset.videoCodec; //videoCodec.length > 0 ? videoCodec[0] : null;
     },
     changeOption() {
       this.outputSetup.selected.preset = 'custom';
@@ -320,30 +326,40 @@ export default {
       this.converting.error = null;
       this.converting.progress = null;
       this.converting.isFinished = false;
-      let filePath = this.inputFile.path;
-      if (!filePath) {
-        filePath = 'ffmpeg/DemoSampleVideo.mp4';
-      }
-      let payload = {
-        target: filePath,
-        config: this.outputSetup.selected
-      };
-      payload.pattern = this.outputSetup.filePattern;
-      this.socket.emit('converter-start', payload, (resp) => {
-        console.log('socket response', resp);
-        if (resp.error) {
-          this.converting.error = resp.error;
+      this.converting.command = '';
+      try {
+        let filePath = this.inputFile.path;
+        if (!filePath) {
+          filePath = 'ffmpeg/DemoSampleVideo.mp4';
         }
-      });
+        let payload = {
+          target: filePath,
+          config: this.outputSetup.selected
+        };
+        payload.pattern = this.outputSetup.filePattern;
+        this.socket.emit('converter-start', payload, (resp) => {
+          console.log('socket response', resp);
+          if (resp.error) {
+            this.converting.error = resp.error;
+          }
+        });
+      } catch (e) {
+        this.converting.error = e.message;
+      }
     },
     receiveConvertDetails(data) {
       console.log('convert details', data);
       if (!data.isFinished) {
         this.converting.progress = data.progress.percent;
+        if (data.command) {
+          this.converting.command = data.command;
+        }
       } else if (data.error) {
         this.converting.error = data.error;
+        this.converting.progress = null;
       } else {
         this.converting.isFinished = true;
+        this.converting.progress = null;
       }
     },
     newConvertion() {
@@ -371,8 +387,11 @@ export default {
   watch: {
   },
   computed: {
-    canStart() {
-      return this.outputSetup.selected.videoCodec === null || this.socket.connected === false || this.converting.isVisible;
+    startDisabled() {
+      return this.outputSetup.selected.videoCodec === null || 
+        (!this.socket) ||
+        (this.socket && this.socket.connected === false) || 
+        (this.converting.isVisible && this.converting.progress !== null);
     }
   }
 }

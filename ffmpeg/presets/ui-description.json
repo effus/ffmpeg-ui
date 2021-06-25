@@ -41,7 +41,7 @@
     {
         "preset": "Youtube Full-HD",
         "file": "youtube-full-hd.js",
-        "videoCodec": "h264",
+        "videoCodec": "libx264",
         "audioCodec": "aac",
         "fileFormat": "mp4",
         "audioChannels": 2,
