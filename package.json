@@ -32,11 +32,9 @@
     "toolbar": true
   },
   "scripts": {
-    "preinstall": "node ./scripts/preinstall.js",
     "start": "nw .",
     "build": "node ./node_modules/nw-builder/bin/nwbuild -p win64 ./make",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "node ./scripts/postinstall.js",
     "dev": "node ./node_modules/nodemon/bin/nodemon.js server.js"
   },
   "repository": {
@@ -53,5 +51,14 @@
     "ignore": [
       "nuxt/*"
     ]
+  },
+  "nwjs-packager": {
+    "nwVersion": "0.54.0",
+    "appFriendlyName": "FFMpeg UI",
+    "appWinIcon": "icons/favicon.ico",
+    "files": ["bin/**"],
+    "builds": {
+      "win": {"zip": true}
+    }
   }
 }
