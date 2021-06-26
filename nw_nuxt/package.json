@@ -33,6 +33,8 @@
   },
   "scripts": {
     "start": "nw .",
+    "preinstall": "cd ./nuxt && (npm install || true) && (npm run build || true) && (npm run generate || true)",
+    "prebuild": "./scripts/prebuild.sh",
     "build": "node ./node_modules/nw-builder/bin/nwbuild -p win64 ./make",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node ./node_modules/nodemon/bin/nodemon.js server.js"
