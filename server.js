@@ -7,6 +7,7 @@ const Ffmpeg = require('fluent-ffmpeg');
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffprobePath = require('@ffprobe-installer/ffprobe').path;
 const date = require('date-and-time');
+require('dotenv').config();
 Ffmpeg.setFfmpegPath(ffmpegPath);
 Ffmpeg.setFfprobePath(ffprobePath);
 
@@ -168,7 +169,6 @@ io.on("connection", socket => {
     });
  });
 
-const bindPort = 3000; // for NW
-//const bindPort = 3001; // for UI dev, webpack proxies here
-
-httpServer.listen(bindPort);
+httpServer.listen(
+    process.env.PORT || 3330
+);

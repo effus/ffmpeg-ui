@@ -80,7 +80,7 @@ export default {
   },
 
   proxy: {
-    '/api': 'http://localhost:3001/',
-    '/socket.io/': 'http://localhost:3001/',
+    '/api': 'http://localhost:3330/',
+    '/socket.io/': 'http://localhost:3330/',
   }
 }
