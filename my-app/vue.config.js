@@ -1,9 +1,14 @@
 // vue.config.js
+
+const webpack = require('webpack');
+
 module.exports = {
     publicPath: '',
-    /*configureWebpack: {
-        output: {
-            publicPath: ''
-        }
-    },*/
+    configureWebpack: {
+        plugins: [
+          new webpack.DefinePlugin({
+            'process.env.FLUENTFFMPEG_COV': false
+          })
+        ]
+    }
   }

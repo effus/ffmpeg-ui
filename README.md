@@ -18,9 +18,9 @@ Looking at https://brainhub.eu/library/electron-alternatives-javascript-framewor
     3. Проблема с остановкой локального сервера
     4. Не удалось запаковать приложение в exe
 
-3. [ ] NW.js + Vuetify
+3. [x] NW.js + Vuetify
 
-    1. 
+    1. проблема с поддержкой fluent-ffmpeg внутри браузера
 
 
 Neutralino (???)
