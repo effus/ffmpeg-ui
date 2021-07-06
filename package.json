@@ -1,0 +1,52 @@
+{
+  "name": "ffmpeg-ui",
+  "version": "1.0.2",
+  "description": "Цель проекта: параметризирование известной утилиты ffmpeg с помощью создания desktop-приложения с использованием одного из известных Web-движков.",
+  "main": "my-app/dist/index.html",
+  "dependencies": {},
+  "devDependencies": {
+    "nw": "^0.54.0",
+    "nw-builder": "^3.5.7",
+    "nwjs-packager": "^1.5.0"
+  },
+  "window": {
+    "position": "center",
+    "width": 700,
+    "min_width": 700,
+    "height": 800,
+    "min_height": 800,
+    "toolbar": true
+  },
+  "scripts": {
+    "start": "nw .",
+    "build": "node ./node_modules/nw-builder/bin/nwbuild -p win64 ./make"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/effus/ffmpeg-ui.git"
+  },
+  "author": "effus",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/effus/ffmpeg-ui/issues"
+  },
+  "homepage": "https://github.com/effus/ffmpeg-ui#readme",
+  "nodemonConfig": {
+    "ignore": [
+      "nuxt/*"
+    ]
+  },
+  "nwjs-packager": {
+    "nwVersion": "0.54.0",
+    "appFriendlyName": "FFMpeg UI",
+    "appWinIcon": "icons/favicon.ico",
+    "files": [
+      "bin/**"
+    ],
+    "builds": {
+      "win": {
+        "zip": true
+      }
+    }
+  }
+}

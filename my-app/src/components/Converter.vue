@@ -181,7 +181,8 @@
 <script>
 
 //import axios from 'axios';
-import presets from '../../../ffmpeg/presets/ui-description.json';
+import presets from '../libs/presets/ui-description.json';
+import FFMpeg from '../libs/ffmpeg';
 //import { io } from "socket.io-client";
 
 export default {
@@ -189,9 +190,9 @@ export default {
   },
   data: function() {
     return {
+      ffmpeg: null,
       isNwAvailable: true,
       inputFile: null, 
-      socket: null,
       inputFileInfo: {
         isVisible: false,
         data: null
@@ -230,14 +231,17 @@ export default {
     }
   },
   mounted: function() {
-    if (typeof nw !== 'undefined') {
-      var win = nw.Window.get();
-      console.log('nw.window', win);
+    this.ffmpeg = new FFMpeg();
+    if (this.ffmpeg.isNwAvailable()) {
+      this.isNwAvailable = true;
+      this.error = null;
     } else {
-      this.error = 'NW object unavailable, sample video file "DemoSampleVideo.mp4" will be used'
       this.isNwAvailable = false;
       this.inputFile = new File([], 'DemoSampleVideo.mp4');
+      this.error = 'NW object unavailable, sample video file "DemoSampleVideo.mp4" will be used'
     }
+    
+
     /*axios.get('/api/encoders/list').then((response) => {
       const codecs = [];
       for (let i in response.data.encoders) {
@@ -281,19 +285,18 @@ export default {
     this.socket.connect();*/
   },
   methods: {
-    showFileInfo() {
-      /*let filePath = this.inputFile.path;
+    async showFileInfo() {
+      let filePath = this.inputFile.path;
       this.outputSetup.isVisible = false;
       if (!this.isNwAvailable) {
         filePath = 'ffmpeg/DemoSampleVideo.mp4';
       }
-      axios.get('/api/fileInfo?file=' + filePath).then((response) => {
+      try {
+        this.inputFileInfo.data = await this.ffmpeg.getVideoInfo(filePath);
         this.inputFileInfo.isVisible = true;
-        this.inputFileInfo.data = response.data.info;
-
-      }).catch((e) => {
+      } catch (e) {
         this.error = e.message;
-      });*/
+      }
     },
     showOutputSetup() {
       this.inputFileInfo.isVisible = false;
