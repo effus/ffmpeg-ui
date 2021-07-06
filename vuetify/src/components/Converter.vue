@@ -182,7 +182,8 @@
 
 //import axios from 'axios';
 import presets from '../libs/presets/ui-description.json';
-import FFMpeg from '../libs/ffmpeg';
+import FFMpegConnector from '../libs/ffmpegConnector';
+const { execSync,spawn } = require('child_process');
 //import { io } from "socket.io-client";
 
 export default {
@@ -231,7 +232,7 @@ export default {
     }
   },
   mounted: function() {
-    this.ffmpeg = new FFMpeg();
+    this.ffmpeg = new FFMpegConnector();
     if (this.ffmpeg.isNwAvailable()) {
       this.isNwAvailable = true;
       this.error = null;
@@ -285,8 +286,24 @@ export default {
     this.socket.connect();*/
   },
   methods: {
+    runWorker() {
+        const child = spawn('pwd', ['.']);
+        child.stdout.on('data', (data) => {
+            console.log(`stdout:\n${data}`);
+        });
+        child.stderr.on('data', (data) => {
+            console.error(`stderr: ${data}`);
+        });
+        child.on('error', (error) => {
+            console.error(`error: ${error.message}`);
+        });
+        child.on('close', (code) => {
+            console.log(`child process exited with code ${code}`);
+        });
+    },
     async showFileInfo() {
-      let filePath = this.inputFile.path;
+      this.runWorker();
+      /*let filePath = this.inputFile.path;
       this.outputSetup.isVisible = false;
       if (!this.isNwAvailable) {
         filePath = 'ffmpeg/DemoSampleVideo.mp4';
@@ -296,7 +313,7 @@ export default {
         this.inputFileInfo.isVisible = true;
       } catch (e) {
         this.error = e.message;
-      }
+      }*/
     },
     showOutputSetup() {
       this.inputFileInfo.isVisible = false;

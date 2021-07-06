@@ -5,7 +5,7 @@
   "main": "vuetify/dist/index.html",
   "dependencies": {},
   "devDependencies": {
-    "nw": "^0.54.0",
+    "nw": "^0.54.1",
     "nw-builder": "^3.5.7",
     "nwjs-packager": "^1.5.0"
   },
@@ -18,7 +18,7 @@
     "toolbar": true
   },
   "scripts": {
-    "start": "nw .",
+    "start": "nw --remote-debugging-port=9222 .",
     "build": "node ./node_modules/nw-builder/bin/nwbuild -p win64 ./make"
   },
   "repository": {

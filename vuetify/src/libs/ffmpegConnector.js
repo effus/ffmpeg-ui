@@ -1,4 +1,4 @@
-const { execSync } = require('child_process');
+const { execSync,spawn } = require('child_process');
 //const FluentFFmpeg = require('fluent-ffmpeg');
 //const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 //const ffprobePath = require('@ffprobe-installer/ffprobe').path;
@@ -6,13 +6,20 @@ const { execSync } = require('child_process');
 //FluentFFmpeg.setFfprobePath(ffprobePath);
 
 
-class FFMpeg {
+class FFMpegConnector {
     constructor() {
         this.win = this.isNwAvailable() ? nw.Window.get() : null;
     }
     
     isNwAvailable() {
         return (typeof nw !== 'undefined');
+    }
+
+    runWorker() {
+        return new Promise(() => {
+            
+        });
+        
     }
 
     /**
@@ -52,4 +59,4 @@ class FFMpeg {
     }
 }
 
-export default FFMpeg;
+export default FFMpegConnector;
