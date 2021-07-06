@@ -1,9 +1,9 @@
 const { execSync } = require('child_process');
-const FluentFFmpeg = require('fluent-ffmpeg');
-const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
-const ffprobePath = require('@ffprobe-installer/ffprobe').path;
-FluentFFmpeg.setFfmpegPath(ffmpegPath);
-FluentFFmpeg.setFfprobePath(ffprobePath);
+//const FluentFFmpeg = require('fluent-ffmpeg');
+//const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+//const ffprobePath = require('@ffprobe-installer/ffprobe').path;
+//FluentFFmpeg.setFfmpegPath(ffmpegPath);
+//FluentFFmpeg.setFfprobePath(ffprobePath);
 
 
 class FFMpeg {
@@ -27,12 +27,12 @@ class FFMpeg {
             if (!fs.existsSync(filePath)) {
                 reject('File not found');
             }
-            FluentFFmpeg.ffprobe(filePath, function(err, data) {
+            /*FluentFFmpeg.ffprobe(filePath, function(err, data) {
                 if (err) {
                     reject(err);
                 }
                 resolve(data);
-            });
+            });*/
         });
     }
 
@@ -41,13 +41,13 @@ class FFMpeg {
      */
     getEncodersList() {
         return new Promise((resolve, reject) => {
-            FluentFFmpeg.getAvailableEncoders(function(err, data) {
+            /*FluentFFmpeg.getAvailableEncoders(function(err, data) {
                 if (err) {
                     reject(err);
                 } else {
                     resolve(data);
                 }
-            });
+            });*/
         });
     }
 }

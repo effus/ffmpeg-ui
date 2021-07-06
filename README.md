@@ -22,6 +22,10 @@ Looking at https://brainhub.eu/library/electron-alternatives-javascript-framewor
 
     1. проблема с поддержкой fluent-ffmpeg внутри браузера
 
+4. [X] NW.js + port spinner + Vuetify
+    
+    1. https://www.npmjs.com/package/spawn-for-ip
+
 
 Neutralino (???)
 

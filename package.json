@@ -2,7 +2,7 @@
   "name": "ffmpeg-ui",
   "version": "1.0.2",
   "description": "Цель проекта: параметризирование известной утилиты ffmpeg с помощью создания desktop-приложения с использованием одного из известных Web-движков.",
-  "main": "my-app/dist/index.html",
+  "main": "vuetify/dist/index.html",
   "dependencies": {},
   "devDependencies": {
     "nw": "^0.54.0",

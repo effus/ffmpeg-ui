@@ -27,6 +27,12 @@
   </v-app>
 </template>
 
+<style lang="scss">
+#loader {
+  display: none;
+}
+</style>
+
 <script>
 import Converter from './components/Converter';
 
