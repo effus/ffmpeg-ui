@@ -13,5 +13,10 @@
   "author": "GitHub",
   "devDependencies": {
     "electron": "^13.1.5"
+  },
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.0.20",
+    "@ffprobe-installer/ffprobe": "^1.1.0",
+    "fluent-ffmpeg": "^2.1.2"
   }
 }

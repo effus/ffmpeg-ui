@@ -11,21 +11,28 @@ class Сonnector {
     
     constructor() {
         //this.win = this.isNwAvailable() ? nw.Window.get() : null;
-        this.engineCallback = this.onEngineCallback;
+        ipcRenderer.on('renderer', this.onEngineCallback);
     }
 
     /**
      * @returns 
      */
-    async checkMessageChannel() {
-        const response = await ipcRenderer.invoke('check-engine', { ping: true });
-        if (response && response.result) {
-            this.flagEngineAvailable = true;
-            return true;
-        } else {
+    async checkEngine() {
+        try {
+            const response = await ipcRenderer.invoke('check-engine', { ping: true });
+            if (response && response.result) {
+                this.flagEngineAvailable = true;
+                return true;
+            } else {
+                this.flagEngineAvailable = false;
+                return false;
+            }
+        } catch (e) {
+            console.error('checkMessageChannel', e);
             this.flagEngineAvailable = false;
             return false;
         }
+    
     }
     
     isEngineAvailable() {
@@ -40,36 +47,27 @@ class Сonnector {
      * @param {*} filePath 
      * @returns 
      */
-    getVideoInfo(filePath) {
-        return new Promise((resolve, reject) => {
-            if (!this.isNwAvailable()) {
-                reject('NW not available');
-            }
-            if (!fs.existsSync(filePath)) {
-                reject('File not found');
-            }
-            /*FluentFFmpeg.ffprobe(filePath, function(err, data) {
-                if (err) {
-                    reject(err);
-                }
-                resolve(data);
-            });*/
-        });
+    async getVideoInfo(filePath) {
+        const result = await ipcRenderer.invoke('video-info', filePath);
+        return result.info;
     }
 
     /**
      * @returns 
      */
-    getEncodersList() {
-        return new Promise((resolve, reject) => {
-            /*FluentFFmpeg.getAvailableEncoders(function(err, data) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(data);
-                }
-            });*/
-        });
+    async getEncodersList() {
+        const result = await ipcRenderer.invoke('get-encoders');
+        return result.list;
+    }
+
+    async getFormatList() {
+        const result = await ipcRenderer.invoke('get-formats');
+        return result.list;
+    }
+
+    async startConverter(params) {
+        const result = await ipcRenderer.invoke('start-converter', params);
+        return result.process;
     }
 }
 

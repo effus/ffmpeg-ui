@@ -1,12 +1,17 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, ipcMain} = require('electron')
-const path = require('path')
+const {app, BrowserWindow, ipcMain} = require('electron');
+const path = require('path');
+const Ffmpeg = require('fluent-ffmpeg');
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const ffprobePath = require('@ffprobe-installer/ffprobe').path;
+Ffmpeg.setFfmpegPath(ffmpegPath);
+Ffmpeg.setFfprobePath(ffprobePath);
 
 function createWindow () {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 800, 
+    width: 1200,
+    height: 700, 
     frame: true,
     resizable: false,
     maximizable: true,
@@ -52,8 +57,56 @@ app.on('window-all-closed', function () {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-// Main process
-ipcMain.handle('check-engine', async (event, arg) => {
+
+ipcMain.handle('check-engine', async (_, arg) => {
   console.log('check-engine', arg);
   return {result: true};
+});
+
+
+const retreiveFunction = function(func, arg) {
+  return new Promise((resolve, reject) => {
+    try {
+      if (arg) {
+        func(arg, function(err, data) {
+          if (err) {
+            return reject(err);
+          }
+          resolve(data);
+        });
+      } else {
+        func(function(err, data) {
+          if (err) {
+            return reject(err);
+          }
+          resolve(data);
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+ipcMain.handle('get-encoders', async () => {
+  const encoders = await retreiveFunction(Ffmpeg.getAvailableEncoders);
+  return {list: encoders};
+});
+
+ipcMain.handle('get-formats', async () => {
+  console.log('get-formats');
+  const formats = await retreiveFunction(Ffmpeg.getAvailableFormats);
+  return {list: formats};
+});
+
+ipcMain.handle('video-info', async (_, filePath) => {
+  console.log('video-info', filePath);
+  const data = await retreiveFunction(Ffmpeg.ffprobe, filePath);
+  return {info: data};
+});
+
+ipcMain.handle('start-converter', async (event, data) => {
+  console.log('start-converter', data, event.sender.send('renderer'));
+  
+  return {process: data};
 });

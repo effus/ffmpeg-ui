@@ -185,6 +185,7 @@ import presets from '../libs/presets/ui-description.json';
 //import ipcRenderer from 'electron';
 import Сonnector from '../libs/сonnector';
 //import { io } from "socket.io-client";
+import { Formatter } from '../libs/formatters';
 
 export default {
   components: {
@@ -233,76 +234,44 @@ export default {
   },
   mounted: async function() {
     this.connector = new Сonnector();
-    await this.connector.checkMessageChannel();
+    await this.connector.checkEngine();
     if (this.connector.isEngineAvailable()) {
       this.isEngineAvailable = true;
       this.error = null;
     } else {
       this.isEngineAvailable = false;
       this.inputFile = new File([], 'DemoSampleVideo.mp4');
-      this.error = 'Converter engine unavailable, sample video file "DemoSampleVideo.mp4" will be used'
+      this.error = 'Converter engine unavailable, sample video file "DemoSampleVideo.mp4" will be used';
+      return;
     }
-    
-
-    /*axios.get('/api/encoders/list').then((response) => {
-      const codecs = [];
-      for (let i in response.data.encoders) {
-        codecs.push({
-          type: response.data.encoders[i].type,
-          tag: i,
-          name: response.data.encoders[i].description
-        });
-      }
-      this.outputSetup.lists.videoCodecs = codecs.filter(item => item.type === 'video').map(item => {
-        return {name: item.name + ' / tag:' + item.tag, tag: item.tag};
-      });
-      this.outputSetup.lists.audioCodecs = codecs.filter(item => item.type === 'audio').map(item => {
-        return {name: item.name + ' / tag:' + item.tag, tag: item.tag};
-      });
+    const formatter = new Formatter();
+    const encoders = await this.connector.getEncodersList();
+    const encodersList = formatter.encodersList(encoders);
+    this.outputSetup.lists.videoCodecs = encodersList.filter(item => item.type === 'video').map(item => {
+      return {name: item.name + ' / tag:' + item.tag, tag: item.tag};
     });
-    axios.get('/api/format/list').then((response) => {
-      const formats = [];
-      for (let i in response.data.formats) {
-        formats.push({
-          tag: i,
-          name: response.data.formats[i].description
-        });
-      }
-      this.outputSetup.lists.fileFormats = formats.map(item => {
-        return {name: item.name + ' / tag:' + item.tag, tag: item.tag};
-      });
+    this.outputSetup.lists.audioCodecs = encodersList.filter(item => item.type === 'audio').map(item => {
+      return {name: item.name + ' / tag:' + item.tag, tag: item.tag};
     });
-
-    this.socket = io();
-    this.socket.on("disconnect", () => {
-      console.log('Socket disconncted');
+    const formats = await this.connector.getFormatList();
+    const formatsList = formatter.formatsList(formats);
+    this.outputSetup.lists.fileFormats = formatsList.map(item => {
+      return {name: item.name + ' / tag:' + item.tag, tag: item.tag};
     });
-    this.socket.on("disconnect", () => {
-      console.log('Socket disconncted');
-    });
-    this.socket.on("connect_error", () => {
-      this.error = 'Socket connection error';
-    });
-    this.socket.on("convert-details", this.receiveConvertDetails);
-    this.socket.connect();*/
   },
   methods: {
-    runWorker() {
-        
-    },
     async showFileInfo() {
-      this.runWorker();
-      /*let filePath = this.inputFile.path;
+      let filePath = this.inputFile.path;
       this.outputSetup.isVisible = false;
       if (!this.isEngineAvailable) {
         filePath = 'ffmpeg/DemoSampleVideo.mp4';
       }
       try {
-        this.inputFileInfo.data = await this.ffmpeg.getVideoInfo(filePath);
+        this.inputFileInfo.data = await this.connector.getVideoInfo(filePath);
         this.inputFileInfo.isVisible = true;
       } catch (e) {
         this.error = e.message;
-      }*/
+      }
     },
     showOutputSetup() {
       this.inputFileInfo.isVisible = false;
@@ -326,7 +295,7 @@ export default {
       this.outputSetup.selected.preset = 'custom';
     },
     startConverter() {
-      /*this.inputFileInfo.isVisible = false;
+      this.inputFileInfo.isVisible = false;
       this.outputSetup.isVisible = false;
       this.converting.isVisible = true;
       this.converting.error = null;
@@ -343,15 +312,18 @@ export default {
           config: this.outputSetup.selected
         };
         payload.pattern = this.outputSetup.filePattern;
-        this.socket.emit('converter-start', payload, (resp) => {
+        this.connector.startConverter(payload);
+        /*this.socket.emit('converter-start', payload, (resp) => {
           console.log('socket response', resp);
           if (resp.error) {
             this.converting.error = resp.error;
           }
-        });
+        });*/
+
+
       } catch (e) {
         this.converting.error = e.message;
-      }*/
+      }
     },
     receiveConvertDetails(data) {
       console.log('convert details', data);
@@ -394,10 +366,8 @@ export default {
   },
   computed: {
     startDisabled() {
-      return true; /*this.outputSetup.selected.videoCodec === null || 
-        (!this.socket) ||
-        (this.socket && this.socket.connected === false) || 
-        (this.converting.isVisible && this.converting.progress !== null);*/
+      return this.outputSetup.selected.videoCodec === null || !this.isEngineAvailable ||
+        (this.converting.isVisible && this.converting.progress !== null);
     }
   }
 }
