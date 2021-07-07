@@ -1,4 +1,5 @@
-const { execSync,spawn } = require('child_process');
+//const ipcRenderer = require('electron');
+const ipcRenderer = window.ipcRenderer;
 //const FluentFFmpeg = require('fluent-ffmpeg');
 //const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 //const ffprobePath = require('@ffprobe-installer/ffprobe').path;
@@ -6,20 +7,33 @@ const { execSync,spawn } = require('child_process');
 //FluentFFmpeg.setFfprobePath(ffprobePath);
 
 
-class FFMpegConnector {
-    constructor() {
-        this.win = this.isNwAvailable() ? nw.Window.get() : null;
-    }
+class Сonnector {
     
-    isNwAvailable() {
-        return (typeof nw !== 'undefined');
+    constructor() {
+        //this.win = this.isNwAvailable() ? nw.Window.get() : null;
+        this.engineCallback = this.onEngineCallback;
     }
 
-    runWorker() {
-        return new Promise(() => {
-            
-        });
-        
+    /**
+     * @returns 
+     */
+    async checkMessageChannel() {
+        const response = await ipcRenderer.invoke('check-engine', { ping: true });
+        if (response && response.result) {
+            this.flagEngineAvailable = true;
+            return true;
+        } else {
+            this.flagEngineAvailable = false;
+            return false;
+        }
+    }
+    
+    isEngineAvailable() {
+        return this.flagEngineAvailable;
+    }
+
+    onEngineCallback(payload) {
+        console.log('onEngineCallback', payload);
     }
 
     /**
@@ -59,4 +73,4 @@ class FFMpegConnector {
     }
 }
 
-export default FFMpegConnector;
+export default Сonnector;

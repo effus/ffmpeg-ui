@@ -27,6 +27,10 @@ Looking at https://brainhub.eu/library/electron-alternatives-javascript-framewor
     1. https://www.npmjs.com/package/spawn-for-ip
     2. child_process not initialized in browser
 
+5. [ ] Electron clean setup + Vuetify + electron-forge
+
+    1. 
+
 
 Neutralino (???)
 

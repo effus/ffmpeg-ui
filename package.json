@@ -1,0 +1,17 @@
+{
+  "name": "ffmpeg_ui",
+  "version": "1.0.0",
+  "description": "FFMpeg UI",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "electron ."
+  },
+  "repository": "https://github.com/effus/ffmpeg-ui",
+  "keywords": [
+    "Electron"
+  ],
+  "author": "GitHub",
+  "devDependencies": {
+    "electron": "^13.1.5"
+  }
+}
