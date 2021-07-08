@@ -5,7 +5,8 @@
   "main": "electron/main.js",
   "scripts": {
     "dev": "set ELECTRON_DEV_MODE=1 && electron .",
-    "build": "bash ./bin/build.sh"
+    "build": "bash ./bin/build.sh",
+    "installer": "installer/setup.js"
   },
   "repository": "https://github.com/effus/ffmpeg-ui",
   "keywords": [
@@ -18,13 +19,19 @@
   "devDependencies": {
     "electron": "^13.1.5",
     "electron-packager": "^15.2.0",
-    "electron-wix-msi": "^3.2.0"
+    "electron-winstaller": "^5.0.0"
   },
   "build": {
     "productName": "FFMpeg UI Tools",
     "win": {
       "icon": "./icons/source.png"
-    }
+    },
+    "files": [
+      "electron/main.js",
+      "electron/preload.js",
+      "vuetify/dist/*",
+      "ffmpeg/*"
+    ]
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
