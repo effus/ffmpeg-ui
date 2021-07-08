@@ -5,7 +5,7 @@
   "main": "electron/main.js",
   "scripts": {
     "dev": "electron .",
-    "build": "electron-builder build"
+    "build": "electron-packager ."
   },
   "repository": "https://github.com/effus/ffmpeg-ui",
   "keywords": [
@@ -17,7 +17,8 @@
   },
   "devDependencies": {
     "electron": "^13.1.5",
-    "electron-packager": "^15.2.0"
+    "electron-packager": "^15.2.0",
+    "electron-wix-msi": "^3.2.0"
   },
   "build": {
     "productName": "FFMpeg UI Tools",
