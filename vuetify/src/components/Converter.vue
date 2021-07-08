@@ -13,20 +13,21 @@
         <v-card-text>
           <v-file-input prepend-icon="mdi-video" show-size truncate-length="55" accept="video/*" 
             v-model="inputFile"
+            :disabled="!converting.isFinished && converting.progress"
             label="Video file input"></v-file-input>            
         </v-card-text>
         <v-card-actions>
           <v-list-item class="grow">
           <v-row align="center" >
-          <v-btn color="default" nuxt @click="newConvertion">
+          <v-btn color="default" nuxt @click="newConvertion" :disabled="!converting.isFinished && converting.progress">
             New video
           </v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="default" nuxt :disabled="inputFile === null" @click="showFileInfo">
+          <v-btn color="default" nuxt :disabled="inputFile === null || (!converting.isFinished && converting.progress)" @click="showFileInfo">
             Input video info
           </v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="default" nuxt @click="showOutputSetup">
+          <v-btn color="default" nuxt @click="showOutputSetup" :disabled="!converting.isFinished && converting.progress">
             Output config
           </v-btn>
           <v-spacer></v-spacer>
@@ -219,7 +220,7 @@ export default {
           videoBitrate: null,
           size: null
         },
-        filePattern: '[originFileDir]/[originFileName]-[datetime].[format]'
+        filePattern: '[originFileDir]/converted-[originFileName]-[datetime].[format]'
       },
       converting: {
         isVisible: false,
@@ -244,6 +245,12 @@ export default {
       this.error = 'Converter engine unavailable, sample video file "DemoSampleVideo.mp4" will be used';
       return;
     }
+    this.connector.setEvents(
+      this.onStartConverting,
+      this.onChangeConvertingProgress,
+      this.onFinishConverting,
+      this.onErrorConverting
+    );
     const formatter = new Formatter();
     const encoders = await this.connector.getEncodersList();
     const encodersList = formatter.encodersList(encoders);
@@ -313,32 +320,35 @@ export default {
         };
         payload.pattern = this.outputSetup.filePattern;
         this.connector.startConverter(payload);
-        /*this.socket.emit('converter-start', payload, (resp) => {
-          console.log('socket response', resp);
-          if (resp.error) {
-            this.converting.error = resp.error;
-          }
-        });*/
-
 
       } catch (e) {
         this.converting.error = e.message;
       }
     },
-    receiveConvertDetails(data) {
-      console.log('convert details', data);
-      /*if (!data.isFinished) {
+
+    onStartConverting(data) {
+      this.converting.progress = 0;
+      this.converting.command = '';
+      console.log('onStartConverting', data);
+      if (data.progress) {
         this.converting.progress = data.progress.percent;
-        if (data.command) {
-          this.converting.command = data.command;
-        }
-      } else if (data.error) {
-        this.converting.error = data.error;
-        this.converting.progress = null;
-      } else {
-        this.converting.isFinished = true;
-        this.converting.progress = null;
-      }*/
+      }
+      if (data.command) {
+        this.converting.command = data.command;
+      }
+    },
+
+    onChangeConvertingProgress(data) {
+      this.converting.progress = data.progress.percent;
+    },
+
+    onFinishConverting() {
+      this.converting.isFinished = true;
+      this.converting.progress = null;
+    },
+    onErrorConverting(data) {
+      this.converting.error = data.error;
+      this.converting.progress = null;
     },
     newConvertion() {
       this.inputFile = null;

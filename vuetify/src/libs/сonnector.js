@@ -1,17 +1,23 @@
-//const ipcRenderer = require('electron');
 const ipcRenderer = window.ipcRenderer;
-//const FluentFFmpeg = require('fluent-ffmpeg');
-//const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
-//const ffprobePath = require('@ffprobe-installer/ffprobe').path;
-//FluentFFmpeg.setFfmpegPath(ffmpegPath);
-//FluentFFmpeg.setFfprobePath(ffprobePath);
 
 
 class Сonnector {
     
     constructor() {
-        //this.win = this.isNwAvailable() ? nw.Window.get() : null;
-        ipcRenderer.on('renderer', this.onEngineCallback);
+        ipcRenderer.on('renderer', (event, payload) => this.onEngineCallback(payload));
+    }
+
+    /**
+     * @param {*} onStart 
+     * @param {*} onProgress 
+     * @param {*} onFinish 
+     * @param {*} onError 
+     */
+    setEvents(onStart, onProgress, onFinish, onError) {
+        this.onStart = onStart || function() {};
+        this.onProgress = onProgress || function() {};
+        this.onFinish = onFinish || function() {};
+        this.onError = onError || function() {};
     }
 
     /**
@@ -39,8 +45,24 @@ class Сonnector {
         return this.flagEngineAvailable;
     }
 
+    /**
+     * @param {*} event 
+     * @param {*} payload 
+     */
     onEngineCallback(payload) {
-        console.log('onEngineCallback', payload);
+        if (payload.isFinished) {
+            if (payload.error) {
+                this.onError(payload);
+            } else {
+                this.onFinish(payload);
+            }
+        } else if (payload.isStarted === true && !payload.progress) {
+            this.onStart(payload);
+        } else if (payload.isStarted === false) {
+            this.onError(payload);
+        } else {
+            this.onProgress(payload);
+        }
     }
 
     /**
@@ -67,7 +89,13 @@ class Сonnector {
 
     async startConverter(params) {
         const result = await ipcRenderer.invoke('start-converter', params);
-        return result.process;
+        if (result && result.isStarted) {
+            this.onStart(result);
+        }
+    }
+
+    async cleanup() {
+        ipcRenderer.invoke('cleanup');
     }
 }
 

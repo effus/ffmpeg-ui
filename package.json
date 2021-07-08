@@ -4,19 +4,32 @@
   "description": "FFMpeg UI",
   "main": "electron/main.js",
   "scripts": {
-    "dev": "electron ."
+    "dev": "electron .",
+    "build": "electron-builder build"
   },
   "repository": "https://github.com/effus/ffmpeg-ui",
   "keywords": [
     "Electron"
   ],
-  "author": "GitHub",
+  "author": {
+    "name": "effus",
+    "email": "effusps@gmail.com"
+  },
   "devDependencies": {
-    "electron": "^13.1.5"
+    "electron": "^13.1.5",
+    "electron-packager": "^15.2.0"
+  },
+  "build": {
+    "productName": "FFMpeg UI Tools",
+    "win": {
+      "icon": "./icons/source.png"
+    }
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
-    "@ffprobe-installer/ffprobe": "^1.1.0",
+    "date-and-time": "^1.0.1",
+    "ffmpeg-static": "^4.4.0",
+    "ffprobe-static": "^3.0.0",
     "fluent-ffmpeg": "^2.1.2"
   }
 }
