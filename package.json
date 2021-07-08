@@ -4,12 +4,12 @@
   "description": "FFMpeg UI",
   "main": "electron/main.js",
   "scripts": {
-    "dev": "electron .",
-    "build": "electron-packager ."
+    "dev": "set ELECTRON_DEV_MODE=1 && electron .",
+    "build": "bash ./bin/build.sh"
   },
   "repository": "https://github.com/effus/ffmpeg-ui",
   "keywords": [
-    "Electron"
+    "FFMpeg Video Converter"
   ],
   "author": {
     "name": "effus",

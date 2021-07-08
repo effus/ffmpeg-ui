@@ -12,6 +12,8 @@ const date = require('date-and-time');
 Ffmpeg.setFfmpegPath(ffmpegPath);
 Ffmpeg.setFfprobePath(ffprobePath);
 
+const isDevMode = (typeof process.env.ELECTRON_DEV_MODE !== 'undefined') && parseInt(process.env.ELECTRON_DEV_MODE)==1;
+
 function createWindow () {
   let { width, height } = screen.getPrimaryDisplay().workAreaSize;
   if (width > 700) {
@@ -19,6 +21,9 @@ function createWindow () {
   }
   if (height > 820) {
     height = 820;
+  }
+  if (isDevMode) {
+    width = 1000;
   }
   const mainWindow = new BrowserWindow({
     width: width,
@@ -28,7 +33,8 @@ function createWindow () {
     maximizable: false,
     minimizable: true,
     closable: true,
-    icon: __dirname + '/icons/favicon.ico',
+    icon: __dirname + '/../icons/favicon.ico',
+    title: 'FFMpeg UI Tools',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
@@ -40,11 +46,13 @@ function createWindow () {
 
   // and load the index.html of the app.
   //mainWindow.loadFile('index.html')
-  //mainWindow.loadFile('vuetify/dist/index.html');
-  mainWindow.loadURL('http://localhost:8080');
+  if (isDevMode) {
+    mainWindow.loadURL('http://localhost:8080');
+    mainWindow.webContents.openDevTools()
+  } else {
+    mainWindow.loadFile('vuetify/dist/index.html');
+  }
 
-  // Open the DevTools.
-  //mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
