@@ -12,10 +12,10 @@
         />
 
         <q-toolbar-title>
-          FFMpeg UI
+          FFMpeg UI v0.2
         </q-toolbar-title>
 
-        <div>v0.2</div>
+        <q-btn @click="onClickClose" color="black" glossy size="sm" icon="close"></q-btn>
       </q-toolbar>
     </q-header>
 
