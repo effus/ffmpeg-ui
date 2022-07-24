@@ -2,7 +2,25 @@
 
 Project goals: Desktop UI for ffmpeg tool
 
-## Checked Frameworks for Build Desktop Apps and Vue.js
+## Current Version - 0.1
+
+1. Based on:
+
+    - Vue 3
+    - Quasar https://quasar.dev/vue-components/
+    - Electron
+    - Material Icons https://fonts.google.com/icons?selected=Material+Icons&icon.query=info
+
+2. Dev Build:
+
+    - `npm install` / `yarn install`
+    - `quasar dev -m electron`
+
+3. Screen
+
+![Screen 1](docs/screen-1.jpg)
+
+## Previous versions and attempts
 
 Looking at https://brainhub.eu/library/electron-alternatives-javascript-frameworks-for-desktop-apps/
 
