@@ -9,7 +9,7 @@ Looking at https://brainhub.eu/library/electron-alternatives-javascript-framewor
 1. [x] Electron + Vue.js (FAIL)
 
     1. Проблема с отображением стандартной системной модалки выбора файла
-    2. Проблема с запуском: после старта отображается белое окно
+    2. Проблема с запуском: после старта иногда отображается белое окно
 
 2. [X] NW.js + Nuxt (FAIL)
 
