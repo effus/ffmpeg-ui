@@ -1,6 +1,6 @@
 # FFMPEG UI
 
-Цель проекта: параметризирование известной утилиты ffmpeg с помощью создания desktop-приложения с использованием одного из известных Web-движков.
+Project goals: Desktop UI for ffmpeg tool
 
 ## Checked Frameworks for Build Desktop Apps and Vue.js
 
@@ -27,12 +27,14 @@ Looking at https://brainhub.eu/library/electron-alternatives-javascript-framewor
     1. https://www.npmjs.com/package/spawn-for-ip
     2. child_process not initialized in browser
 
-5. [ ] Electron clean setup + Vuetify + electron-packager
+5. [x] Electron clean setup + Vuetify + electron-packager
 
-    1. 
+    1. Almost done, but problems with installer
+
+6. [ ] Vue 3 + Pinia + Quasar + Electron
+    1. https://mokkapps.de/blog/building-a-vue-3-desktop-app-with-pinia-electron-and-quasar/
 
 
-Neutralino (???)
 
 ## FYI: best way to add FFmpeg to project
 
